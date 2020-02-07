@@ -47,11 +47,12 @@ public class LoyaltyCardServiceImpl implements LoyaltyCardService {
 
     private LoyaltyCard update(LoyaltyCard loyaltyCard, List<Transaction> transactions) {
         double point = loyaltyCard.getPoint();
+        long pointConfig = configDAO.findById(1l).get().getValue();
         long totalSent = loyaltyCard.getTotalSent();
         List<LoyaltyCardType> loyaltyCardTypes = loyaltyCardTypeDAO.findAllByOrderBySpentThresholdAsc();
 
         for (Transaction item: transactions) {
-            point += item.getPointAdjust();
+            point += item.getSpentAdjust()/(pointConfig * 1000);
             totalSent += item.getSpentAdjust();
         }
         loyaltyCard.setPoint(point);
